@@ -1,0 +1,108 @@
+\documentclass[review]{article}
+
+\usepackage{lineno,hyperref}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
+\usepackage{graphicx}
+\usepackage[table]{xcolor}
+\usepackage[font=small,skip=0pt]{caption}
+\usepackage{wrapfig}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{varwidth}
+\usepackage{verbatim}
+\usepackage{tabularx}
+\usepackage[table]{xcolor}
+
+
+\graphicspath{{./Images/}}
+
+\newcommand*{\img}[1]{%
+    \raisebox{-.15\baselineskip}{%
+        \includegraphics[
+        height=0.8\baselineskip,
+        width=0.8\baselineskip,
+        ]{#1}%
+    }%
+}
+
+\newenvironment{centerverbatim}{%
+  \par
+  \centering
+  \varwidth{\linewidth}%
+  \verbatim
+}{%
+  \endverbatim
+  \endvarwidth
+  \par
+}
+
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+
+\modulolinenumbers[5]
+%% `Elsevier LaTeX' style
+\bibliographystyle{elsarticle-num}
+
+\begin{document}
+\input{titlepage}
+\newpage{}
+\tableofcontents
+\newpage{}
+
+\section{Introduction}
+Effectively managing a vet's clinic can be challenging for different reasons. First of all, there is a maximum number of vets that can work at the clinic because of the limited spaces and rooms in the building itself (visiting rooms, exam rooms, surgery room etc.), and not all vets are specialized and can deal with all of the cases, meaning that some surgeries can be performed only by specialized doctors. Furthermore, the procedure used to tackle emergency patients is very different and takes way more time than dealing with routine patients; moreover, surgery, visiting and hospitalization time can vary a lot from patient to patient, keeping doctors occupied and unable to visit other patients. There is also a maximum number of patients that can be queued at anytime, so new patients that arrive at the clinic when the queue is full will be denied access to the waiting room and sent to some other clinic. The variability of time is a serious problem linked with the uncertainty of the gravity of the patient, in fact other patients in queue may have their visit seriously delayed because of the time needed to visit and operate on accepted patients and even die because of the long wait. Another problem is that of emergency patients that have been accepted to the waiting room but need immediate medical attention (are therefore emergencies). These patients need to wait for the next doctor to become available, but that might be too late based on the gravity of their condition.
+\\\\
+To deal with these uncertainties and to try to give the issues described a more structured approach, the problem depicted was modeled in a simulation using the Anylogic tool through the Discrete Event modeling paradigm, with the aim of collecting meaningful values for the parameters of interest, which are the amount of patients lost on average at a working day at the clinic, and the average time passed between the end of the shift and the dismissal of all patients that were inside and in line at the clinic when the shift ended.\\The project's code can be found at \href{https://github.com/sarareg0412/Vet-s-Clinic}{\textbf{this link}}. The following is a description of the model developed.
+
+\subsection{Specific Agents}
+The agents foreseen for the model are three:
+\begin{itemize}
+\item \textbf{Vet}:  this is the agent used to model the behaviour of specialized doctors. In this model, these doctors are preferred (but not bounded) to visit emergency patients and can perform exams and surgery on the visited patient. In order to start the surgery, an assistant is needed.
+\end{itemize}
+
+\subsection{Main Agent}
+\label{Main}
+Other than the agents specific for the problem, any Anylogic project must provide an additional agent where the simulation will actually take place. This is the Main agent, which can be fully customized to explicit how agents interact with one another and to set the problem's features of interest. The Main agent for the project was designed in the following way:
+\begin{itemize}
+\item \textbf{Parameters}: project's attributes defining some key characteristics of the problem modeled. These will be changed by the user through the experiment's presentation page.
+\begin{list}{$\circ$}{}
+\item \textbf{maxWaitingPatients}: parameter used to set the maximum number of waiting patients at the same time at the clinic. In this model it can vary from two to five and it's used to set the capacity of the \textit{animalQueue} object.
+\end{list}
+\end{itemize}
+
+The following flowchart shows the behaviour of the Animal agent.\\
+%\begin{wrapfigure}{l}{0.50\textwidth}
+%\includegraphics[width=0.90\linewidth]{animal} 
+%\caption{Diagram of the Animal agent's behaviour}
+%\label{fig:wrapfig}
+%\end{wrapfigure}
+
+\subsubsection{Vet and AssistantVet}
+The following flowcharts shows the behaviour of the Vet and AssistantVet agents.
+%\begin{figure}[h!]
+%	\begin{minipage}[c]{0.40\linewidth}
+%	  \centering
+%	  \includegraphics[scale=0.85]{vet}
+%	  \caption{Diagram of the Vet agent's behaviour}
+%	\end{minipage}\hfill
+%	\begin{minipage}[c]{0.40\linewidth}
+%	  \centering
+%	  \includegraphics[scale=0.80]{assistantvet}
+%	  \caption{Diagram of the AssistantVet agent's behaviour}
+%	\end{minipage}
+%\end{figure}
+
+$$
+	X = \left\{  \begin{array}{rcl} 1& \mbox{ if} &p<0.5\\ 0 & \mbox{} & otherwise
+						\end{array}\right.
+$$
+
+A truncated normal random variable is derived from a normally distributed random variable by bounding it to fit in the specified interval \verb|[min, max]|, shifting it to the right by \verb|shift| and then stretching it by the \verb|stretch| coefficient. Based on the information acquired by the interview with the veterinarian, the random variable representing the visiting time was defined with the following parameters, using the \verb|normal(min,max,shift,stretch)| function from Anylogic's probability distribution functions:
+$$
+	\verb|normal(5,15,10,5)|
+$$
+Meaning that the visit time follows a normal distribution function with $\mu = 10$ and ${\sigma^2} = 5$ and may take values from 5 to 15 minutes.\\\\
+
+\nocite{*}
+\bibliography{mybibfile}
+
+\end{document}
