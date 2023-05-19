@@ -1,0 +1,92 @@
+Point-based view of the trajectory. The trajectory is a series of timestamped points. No interpolation is performed. Therefore it does not make sense to compute the speed.
+
+Methods from descriptive statistics
+Get insights into data statistics before working with data.
+Example:
+- Summary statistics on length and duration of trajectories (mean, median, and dispersion measures such as standard deviation and quantiles). The goal is to respond to questions such as: What is the ‘amount of data’? Are the trajectories ‘homogeneous’ in the dataset?
+- Distribution of the spatial and temporal distance between consecutive points. Questions: what is the best model for trajectories, continuous or discrete? Are there anomalies in data distribution?
+
+spatial distance between consecutive points (also called step-length)
+Data cleaning targets the removal of noise from data.
+ 
+Position sampling rate; description of point tables
+https://senseable.mit.edu/louvre/#viz
+High sampling rate: nominally 1 point every 35 ms.
+Consecutive points are a few centimeters apart. Noisy points due to the presence of obstacles hindering the correct propagation of signals
+ 
+Spatial measures of central tendency (e.g. mean) and dispersion (e.g. standard deviation) can give a first idea on the relative position of points in a region and their concentration/dispersion
+
+Similar to standard deviation, the Standard Distance Deviation (SDD) (or Standard Distance) measures the compactness of a spatial distribution of features around its mean center. SSD can be represented as radius of a circle centered in the mean point (centroid). The smaller the circle, the higher the concentration
+
+Statistics on the distances from the mean centre:
+Count: 1475
+Minimum value: 105.002
+Maximum value: 8666.853
+Mean value: 3479.586
+Median value: 3333.340
+Standard deviation: 1594.003
+
+DKE is a statistical method for the estimate of point feature density in a region. A few applications:
+- Estimate of an unknown probability density function, in alternative to histograms
+- Clustering, namely detecting points aggregations
+- Visualization of point concentration (heatmaps)
+Heatmap based on KDE: the highest density areas identify stops. Note that there is no time information. Kernel density estimation can be also applied to identify point aggregations or clusters. Yet, this method presents a major limit as clusters can be only perceived visually.
+
+Clustering methods are generic techniques which can be applied to group objects defined as points in a space equipped with a distance function. Clustering is useful for:
+- Understanding the hidden structure of a set of objects
+- Summarizing a set of objects
+- Finding the outliers, namely the points that cannot be associated with any label
+There exist different paradigms, each grounded on a specific definition of clusters.
+
+- Partitional clustering (e.g. K-means)
+- Density-based clustering (e.g. DBScan)
+
+Partitional clustering. Every cluster has a representative point defined by its centroid. Clusters are defined so as to satisfy the following condition: the objects in a cluster, say C, are closer to the centroid of C than to the centroid of any other cluster. K-means algorithm limitations: 
+• K-means clusters have a spherical shape. The techniques is not able to handle clusters of differing size and of arbitrary shape (see next)
+• K-means does not handle outliers, namely objects that do not belong to any cluster
+• The number of cluster k shall be known, while that might be not the case
+• The result depends on the choice of the initial centroids
+
+The second paradigm we consider is density-based clustering. A cluster is a set of objects forming a high-density region separated by low-density regions. Unlike the partitional paradigm, the set of clusters does not form a partition, namely there may exist points that do not belong to clusters. Also, unlike Density Kernel Estimation, the density is not computed by interpolation but rather is defined in terms of number of points.
+DBSCAN. Key features are:
+• The number of clusters is not known in advance
+• Clusters can be of arbitrary shape
+
+In essence, a cluster is a group of points such that every point is sorrounded by a relatively high number of points.
+Input parameters:
+- MinPts: the minimum number of points within the
+circular neighborhood of a point;
+- Eps: the radius of the neighbourhood
+
+DBSCAN is resistant to noise; clusters are of different shape and size. DBSCAN does not work well if the point density varies in the dataset. The parameters assume a minimum density threshold for all of the clusters. The density threshold may be difficult to set. Moreover the density in the point set can vary, thus setting a unique threshold may not work.
+
+Cluster validation is the process of evaluating the quality of clusters and thus the performance of a clustering algorithm on a given data set.
+
+- External validation : compare the obtained clusters with clusters that are assumed to be correct (representing the ground truth)
+- Internal validation: compare different clusterings, by measuring some property of clusters
+
+
+Internal validation : Silhouette score. It measures the relation between intra-cluster and inter-cluster distance. Intra-cluster
+distance measures the compactness, inter-cluster distance the separation. It would be desirable to have low intra-cluster and high inter-cluster distance. The Silhouette score is commonly used with the partitional paradigm (K-means). Internal validation is useful to estimate a value for K when the number of clusters is not known.
+
+External validation: in general the Rand Index compares two partitions and evaluates their similarity. It can be used to compare the detected clusters against the true clusters (ground truth).
+
+In general the validation methods are specific for the various paradigms. Likewise, the availability of validation methods in sw libraries. For example, validation methods for DBSCAN clusters are more recent than those for K-means and not equally available.
+
+Spatio-temporal clustering: ST-DBSCAN.
+The idea is to extend the notion of distance - based on which density is computed - to account not only of the distance in space but also in time. An additional parameter: Eps2
+Eps1 – maximum spatial distance between the points of a cluster
+Eps2 – maximum temporal distance between the points of a cluster
+
+A mobility pattern represents a ‘kind of movement’, recognizable based on spatial and temporal properties. Typically, it reveals a specific behavior or situation. Ex:
+- If an individual stops in front of a shelf in a mall, it means that he/she is likely interested in that kind of products
+
+The general problem is how to recognize a given pattern from a sequence of spatio-temporal points. Patterns can be detected:
+- at different spatial and temporal scales, eg. migration vs. visiting a museum.
+- in real time vs. historical data (trajectories)
+
+The stop-move pattern's goal is to recognize the places where the individuals stops based on movement and contextual information. A stop is a spatio-temporal concept: it is defined by a place and a time interval. An object stopping twice at the same place generates two distinct stops, each with its own time interval. A stop describes a portion of a spatial trajectory. Two consecutive stops are separated by a sub-trajectory called "move".
+
+Stay Point Detection is a trajectory segmentation method. Given a spatial trajectory, a stay point is the representative spatio-temporal point of a region where the individual stops for at least a minimum time. Input parameters: DistanceThreshold, TimeThreshold. The algorithm does not detect noise. 
+
+Spatio-temporal clusters, though spatially separated, might have temporally overlapping intervals. Instead, the stay points are temporally disjoint. Spatio-temporal clustering and trajectory segmentation are thus conceptually different operations. Yet in specific situations the result can be similar.
